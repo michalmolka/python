@@ -19,6 +19,7 @@ class SQLServer:
     @classmethod
     def sql_server_instances(cls):
         """Looks for SQL Server instance names."""
+
         instance_name = subprocess.run(  # Gets active instances.
             "powershell.exe Get-Service | Where-Object {$_.Name -like 'MSSQL$*'}",
             stdout=subprocess.PIPE,
@@ -40,6 +41,7 @@ class SQLServer:
     @classmethod
     def sql_server_databases(cls, instances):
         """Returns instances and databases"""
+
         if not instances:
             return
         databases = []
@@ -60,6 +62,7 @@ class SQLServer:
     @classmethod
     def sql_server_connection_string(cls):
         """Returns connection strings"""
+
         for instance_database in cls.instance_database_list:
             for database in instance_database[1]:
                 cls.sql_server_connection_string_list.append(

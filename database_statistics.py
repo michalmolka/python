@@ -14,6 +14,8 @@ class DatabasesStatistics:
         self.connection_info = connection_info
         self.numeric_columns = ["Data_Size", "Dictionary_Size", "Hierarchy_Size", "Sum"]
         self.connection_string = ""
+        self.datasets = []
+        self.byte_mbyte = ""
         # Checks if instance concerns SQL Server or PowerBI
         if self.connection_info.__class__.__name__ == "SQLServer":
             self.connection_string = self.connection_info.sql_server_connection_string_list[
@@ -24,12 +26,6 @@ class DatabasesStatistics:
                 position
             ]
 
-        self.dataset_data = pd.DataFrame()
-        self.dataset_dictionary = pd.DataFrame()
-        self.dataset_hierarchy = pd.DataFrame()
-        self.dataset_cardinality = pd.DataFrame()
-        self.datasets = []
-        self.byte_mbyte = ""
         if mbyte == 1:  # Set megabytes view or stardard bytes.
             self.byte_mbyte = 1000000
         else:
@@ -40,6 +36,7 @@ class DatabasesStatistics:
 
     def get_statistics(self):
         """Gets tables statistics"""
+
         # Fixed queries to get data from DMV.
         query_string = []
         query_string.append(
@@ -74,6 +71,7 @@ class DatabasesStatistics:
 
     def transform_data(self):
         """Transforms retrieved data"""
+
         # Change Column_Name to standard format: "column name (number)"
         for dataset_variable in [self.datasets[3], self.datasets[2]]:
             dataset_variable.Column_Name = dataset_variable.Column_Name.str.split(
@@ -121,6 +119,7 @@ class DatabasesStatistics:
             .transpose()
             .assign(Table_Name="Total", Column_Name="Total", Cardinality_Size=None)
         )
+
         # Add total, subtotal rows and Sum column.
         final_dataframe = merged.append(sub_total).append(total)
         final_dataframe["Sum"] = (
@@ -128,7 +127,7 @@ class DatabasesStatistics:
             + final_dataframe["Dictionary_Size"]
             + final_dataframe["Hierarchy_Size"]
         )
-        # Bytes or Mbytes data view, and round to 2 digits.
+        # Bytes or MBytes data view, and round to 2 digits.
         final_dataframe[self.numeric_columns] = final_dataframe[
             self.numeric_columns
         ].applymap(lambda x: round(x / self.byte_mbyte, 2))

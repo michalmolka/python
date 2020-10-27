@@ -1,6 +1,5 @@
-"""
-Looks for local Power BI instances.
-"""
+"""Looks for local Power BI instances."""
+
 import re
 import os
 from sys import path
@@ -12,10 +11,8 @@ from pyadomd import Pyadomd
 
 
 class PowerBILocal:
-    """
-    Looks for local PowerBI instances, returns port number, database name, \
-    file path and connection strings.
-    """
+    """Looks for local PowerBI instances, returns port number, database name, \
+    file path and connection strings."""
 
     pbi_connection_data = []
     pbi_connection_string_list = []
@@ -26,6 +23,7 @@ class PowerBILocal:
     @classmethod
     def power_bi_pid(cls):
         """Returns local PowerBI pid instances."""
+
         powerbi_pid = os.popen(  # Looks for pid.
             'tasklist | findstr "PBIDesktop.exe"'
         ).readlines()
@@ -39,6 +37,7 @@ class PowerBILocal:
     @classmethod
     def power_bi_file(cls, pid_list):
         """Returns local PowerBI instances file pathes."""
+
         if not pid_list:
             raise Exception("No Power Bi local instances.")
         pb_files = []
@@ -58,9 +57,8 @@ class PowerBILocal:
 
     @classmethod
     def power_bi_port(cls, pid_list):
-        """
-        Returns PowerBI local instances ports.
-        """
+        """Returns PowerBI local instances ports."""
+
         if not pid_list:
             raise Exception("No Power BI local instances.")
         ports = []
@@ -83,6 +81,7 @@ class PowerBILocal:
     @classmethod
     def power_bi_database(cls, ports_files: list):
         """Returns PowerBI local instances databases"""
+
         if not ports_files:
             raise Exception("No Power BI local instances.")
         databases = []
@@ -100,6 +99,7 @@ class PowerBILocal:
     @classmethod
     def pbi_connection_string(cls):
         """Wrapper for previous functions"""
+
         if not PowerBILocal.power_bi_pid():
             raise Exception("No Power BI  local instances.")
         # Merge lists from previous functions.
